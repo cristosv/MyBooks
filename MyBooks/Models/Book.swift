@@ -12,6 +12,9 @@
 import SwiftUI
 import SwiftData
 
+// Cloudkit requires values for all properties
+// All relationships must be optional
+// Cloudkit cannot have a @Unique property
 @Model
 class Book {
     var title: String = ""
