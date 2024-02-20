@@ -41,7 +41,7 @@ struct QuotesListView: View {
                 Button(isEditing ? "Update" : "Create") {
                     if isEditing {
                         selectedQuote?.text = text
-                        selectedQuote?.page = page.isEmpty ? nil : page
+                        selectedQuote?.page = page.isEmpty ? "nil" : page
                         page = ""
                         text = ""
                         selectedQuote = nil
@@ -70,9 +70,10 @@ struct QuotesListView: View {
                     Text(quote.text)
                     HStack {
                         Spacer()
-                        if let page = quote.page, !page.isEmpty {
-                            Text("Page: \(page)")
-                        }
+                        Text("Page: \(quote.page)")
+//                        if let page = quote.page, !page.isEmpty {
+//                            Text("Page: \(page)")
+//                        }
                     }
                 }
                 .contentShape(Rectangle())

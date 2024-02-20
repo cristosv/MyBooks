@@ -10,8 +10,10 @@
 
 
 import SwiftUI
+import SwiftData
 
 struct EditBookView: View {
+    @Environment(\.modelContext) private var context
     @Environment(\.dismiss) private var dismiss
     let book: Book
     @State private var status = Status.onShelf
@@ -154,6 +156,25 @@ struct EditBookView: View {
                 }
                 .buttonStyle(.borderedProminent)
             }
+            Button {
+                let actors = Actor(name: "I'm the actor", books: book)
+                book.actors = [actors]
+                if let data = book.packageDataForTransferToWatch() {
+                    if let newBook = Book.unpackageData(userInfo: data) {
+                        let tempContext = ModelContext(context.container)
+                        tempContext.insert(newBook)
+                        print(newBook)
+//                        if newBook.title != book.title {
+//                            context.insert(newBook)
+//                        } else {
+//                            print("same book: \(newBook.title)")
+//                        }
+                    }
+                }
+            }label: {
+                Image(systemName: "minus.circle.fill")
+                    .imageScale(.large)
+            }
         }
         .onAppear {
             status = Status(rawValue: book.status)!
@@ -173,6 +194,7 @@ struct EditBookView: View {
         || rating != book.rating
         || title != book.title
         || author != book.author
+        || rating != book.rating
         || synopsis != book.synopsis
         || dateAdded != book.dateAdded
         || dateStarted != book.dateStarted

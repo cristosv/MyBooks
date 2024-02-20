@@ -42,6 +42,7 @@ struct BookListView: View {
                         Image(systemName: "plus.circle.fill")
                             .imageScale(.large)
                     }
+                    
                 }
                 .sheet(isPresented: $createNewBook) {
                     NewBookView()

@@ -13,15 +13,48 @@ import Foundation
 import SwiftData
 
 @Model
-class Quote {
-    var creationDate: Date = Date.now
+class Quote: Codable {
+    enum CodingKeys: CodingKey {
+        case text, page, creationDate
+    }
+
     var text: String = ""
-    var page: String? = ""
-    
-    init(text: String, page: String? = nil) {
+    var page: String = ""
+    var creationDate: Date = Date.now
+    @Relationship(deleteRule: .nullify)
+    var book: Book?
+
+    init(text: String, page: String = "") {
         self.text = text
         self.page = page
+        self.creationDate = Date.now
     }
     
-    var book: Book?
+    required init(from decoder: Decoder) throws {
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            text = try container.decode(String.self, forKey: .text)
+            page = try container.decode(String.self, forKey: .page)
+            creationDate = try container.decode(Date.self, forKey: .creationDate)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        do {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(text, forKey: .text)
+            try container.encode(page, forKey: .page)
+            try container.encode(creationDate, forKey: .creationDate)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+}
+
+extension Quote: CustomStringConvertible {
+    var description: String {
+        return text + "\n Page: \(page)"
+    }
 }

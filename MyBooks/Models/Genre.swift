@@ -13,11 +13,16 @@ import SwiftUI
 import SwiftData
 
 @Model
-class Genre {
+class Genre: Codable {
+    enum CodingKeys: CodingKey {
+        case name, color
+    }
+
     var name: String = ""
     var color: String = "FF0000"
+    @Relationship(deleteRule: .noAction)
     var books: [Book]?
-    
+
     init(name: String, color: String) {
         self.name = name
         self.color = color
@@ -26,4 +31,32 @@ class Genre {
     var hexColor: Color {
         Color(hex: self.color) ?? .red
     }
+
+    required init(from decoder: Decoder) throws {
+        do {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            name = try container.decode(String.self, forKey: .name)
+            color = try container.decode(String.self, forKey: .color)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        do {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(name, forKey: .name)
+            try container.encode(color, forKey: .color)
+        } catch {
+            print(error.localizedDescription)
+        }
+    }
+}
+
+extension Genre: CustomStringConvertible {
+    var description: String {
+        return name + "\nColor \(color)" + "\nBook Count: \(books?.count ?? 0)"
+    }
+    
+
 }
