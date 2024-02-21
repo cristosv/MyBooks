@@ -140,7 +140,7 @@ enum Status: Int, Codable, Identifiable, CaseIterable {
 
 extension Book: CustomStringConvertible {
     var description: String {
-        return title + "\n" + author + "\nStatus: \(status)" + "\nQuotes: \(quotes)" + "\nGenre: \(genres)" // + "\nActors: \(actors?.count)"
+        return title + "\n" + author + "\nStatus: \(status)" + "\nQuotes: \(String(describing: quotes))" + "\nGenre: \(String(describing: genres))" // + "\nActors: \(actors?.count)"
     }
 }
 

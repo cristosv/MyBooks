@@ -80,7 +80,7 @@ struct QuotesListView: View {
                 .onTapGesture {
                     selectedQuote = quote
                     text = quote.text
-                    page = quote.page ?? ""
+                    page = quote.page 
                 }
             }
             .onDelete { indexSet in
