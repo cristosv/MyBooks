@@ -157,18 +157,14 @@ struct EditBookView: View {
                 .buttonStyle(.borderedProminent)
             }
             Button {
-                let actors = Actor(name: "I'm the actor", books: book)
-                book.actors = [actors]
+//                let actors = Actor(name: "I'm the actor", books: book)
+//                book.actors = [actors]
                 if let data = book.packageDataForTransferToWatch() {
                     if let newBook = Book.unpackageData(userInfo: data) {
                         let tempContext = ModelContext(context.container)
                         tempContext.insert(newBook)
                         print(newBook)
-//                        if newBook.title != book.title {
-//                            context.insert(newBook)
-//                        } else {
-//                            print("same book: \(newBook.title)")
-//                        }
+                        tempContext.delete(newBook)
                     }
                 }
             }label: {

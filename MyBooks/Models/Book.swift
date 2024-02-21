@@ -33,8 +33,8 @@ class Book: Codable {
     var quotes: [Quote]?
     @Relationship(inverse: \Genre.books)
     var genres: [Genre]?
-    @Relationship(deleteRule: .cascade)
-    var actors: [Actor]?
+//    @Relationship(inverse: \Actor.books)
+//    var actors: [Actor]?
 
 
     enum CodingKeys: CodingKey {
@@ -58,9 +58,9 @@ class Book: Codable {
             }
 
             recommendedBy = try container.decode(String.self, forKey: .recommendedBy)
-//            quotes = try container.decode([Quote].self, forKey: .quotes)
-//            genres = try container.decode([Genre].self, forKey: .genres)
-            actors = try container.decode([Actor]?.self, forKey: .actors)
+            quotes = try container.decode([Quote]?.self, forKey: .quotes)
+            genres = try container.decode([Genre]?.self, forKey: .genres)
+//            actors = try container.decode([Actor]?.self, forKey: .actors)
         } catch {
             print(error.localizedDescription)
         }
@@ -78,9 +78,9 @@ class Book: Codable {
             try container.encode(rating, forKey: .rating)
             try container.encode(status, forKey: .status)
             try container.encode(recommendedBy, forKey: .recommendedBy)
-//            try container.encode(quotes, forKey: .quotes)
-//            try container.encode(genres, forKey: .genres)
-            try container.encode(actors, forKey: .actors)
+            try container.encode(quotes, forKey: .quotes)
+            try container.encode(genres, forKey: .genres)
+//            try container.encode(actors, forKey: .actors)
         } catch {
             print(error.localizedDescription)
         }
@@ -140,7 +140,7 @@ enum Status: Int, Codable, Identifiable, CaseIterable {
 
 extension Book: CustomStringConvertible {
     var description: String {
-        return title + "\n" + author + "\nStatus: \(status)" + "\nQuotes: \(quotes)" + "\nGenre: \(genres)" + "\nActors: \(actors?.count)"
+        return title + "\n" + author + "\nStatus: \(status)" + "\nQuotes: \(quotes)" + "\nGenre: \(genres)" // + "\nActors: \(actors?.count)"
     }
 }
 
@@ -155,59 +155,34 @@ extension Book {
         guard let jsonData = try? JSONEncoder().encode(book) else { return nil }
         var userInfo = [String : Any]()
 
-//        if #available(iOS 13.0, *) {
-//            do {
-//                let compressedData = try (jsonData as NSData).compressed(using: .zlib)
-//                userInfo["TextCodable"] = compressedData
-//            } catch {
-//                os_log("Trip compression Error")
-//            }
-//        } else {
-//            userInfo["TextCodable"] = jsonData
-//        }
+        do {
+            let compressedData = try (jsonData as NSData).compressed(using: .zlib)
+            userInfo["TextCodable"] = compressedData
+        } catch {
+            os_log("Trip compression Error")
+        }
 
         if let jsonString = String(data: jsonData, encoding: .utf8) {
             print(jsonString) // Prints the JSON string
         }
-
-        userInfo["TextCodable"] = jsonData
 
         return userInfo
     }
 
     /// Class function, decodes an encoded and/or compressed Trip
     static func unpackageData(userInfo: [String: Any]) -> Book? {
-        var newBook : Book?
+        var book : Book?
 
-        
         if let data = userInfo["TextCodable"] as? Data {
-            os_log("unpackageData trip")
-            if let jsonString = String(data: data, encoding: .utf8) {
-                print(jsonString) // Prints the JSON string
-            }
+            os_log("unpackageData compressedTrip")
             do {
-                newBook = try JSONDecoder().decode(Book.self, from: data)
-                if let newBook {
-                    return newBook
-                }
+                let decompressedData = try (data as NSData).decompressed(using: .zlib)
+                book = try JSONDecoder().decode(Book.self, from: decompressedData as Data)
             } catch {
-                os_log("Error decoding trip")
-                print(error.localizedDescription)
+                os_log("Error Decompressing or decoding trip")
             }
         }
-
-//        if let data = userInfo["TextCodable"] as? Data {
-//            os_log("unpackageData compressedTrip")
-//            do {
-//                if #available(iOS 13.0, *) {
-//                    let decompressedData = try (data as NSData).decompressed(using: .zlib)
-//                    book = try JSONDecoder().decode(Book.self, from: decompressedData as Data)
-//                }
-//            } catch {
-//                os_log("Error Decompressing or decoding trip")
-//            }
-//        }
-        return nil
+        return book
     }
 
     // iOS 12+ compatible compress/decompress routines; require that
@@ -231,7 +206,6 @@ extension Book {
 
         return encodeData
     }
-
     static func uncompressData(for data: Data, originalSize: Int) -> Data? {
         let bufferSize = originalSize
         let destinationBuffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)

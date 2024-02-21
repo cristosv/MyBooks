@@ -21,7 +21,7 @@ class Quote: Codable {
     var text: String = ""
     var page: String = ""
     var creationDate: Date = Date.now
-    @Relationship(deleteRule: .nullify)
+
     var book: Book?
 
     init(text: String, page: String = "") {
