@@ -21,7 +21,6 @@ class Genre: Codable {
     var name: String = ""
     var color: String = "FF0000"
 
-    @Relationship(deleteRule: .noAction)
     var books: [Book]?
 
     init(name: String, color: String) {

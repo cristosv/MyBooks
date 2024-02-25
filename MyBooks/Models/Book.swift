@@ -29,7 +29,7 @@ class Book: Codable {
     var rating: Int?
     var status: Status.RawValue = Status.onShelf.rawValue
     var recommendedBy: String = ""
-    @Relationship(deleteRule: .cascade)
+    @Relationship(deleteRule: .cascade) 
     var quotes: [Quote]?
     @Relationship(inverse: \Genre.books)
     var genres: [Genre]?
