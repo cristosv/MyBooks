@@ -34,7 +34,7 @@ class Book: Codable {
     @Relationship(inverse: \Genre.books)
     var genres: [Genre]?
 //    @Relationship(inverse: \Actor.books)
-//    var actors: [Actor]?
+    var actors: [Actor]?
 
 
     enum CodingKeys: CodingKey {

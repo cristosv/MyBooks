@@ -157,16 +157,16 @@ struct EditBookView: View {
                 .buttonStyle(.borderedProminent)
             }
             Button {
-//                let actors = Actor(name: "I'm the actor", books: book)
-//                book.actors = [actors]
-                if let data = book.packageDataForTransferToWatch() {
-                    if let newBook = Book.unpackageData(userInfo: data) {
-                        let tempContext = ModelContext(context.container)
-                        tempContext.insert(newBook)
-                        print(newBook)
-                        tempContext.delete(newBook)
-                    }
-                }
+                let actors = Actor(name: "I'm the actor", books: book)
+                book.actors = [actors]
+//                if let data = book.packageDataForTransferToWatch() {
+//                    if let newBook = Book.unpackageData(userInfo: data) {
+//                        let tempContext = ModelContext(context.container)
+//                        tempContext.insert(newBook)
+//                        print(newBook)
+//                        tempContext.delete(newBook)
+//                    }
+//                }
             }label: {
                 Image(systemName: "minus.circle.fill")
                     .imageScale(.large)
